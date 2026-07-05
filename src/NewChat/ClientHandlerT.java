@@ -40,13 +40,19 @@ public class ClientHandlerT implements Runnable {
 
 	@Override
 	public void run() {
+		long startTime = System.currentTimeMillis(); // 시작 시간
 
 		try {
 			String msg;
 
 			clientName = in.readLine();
 
-			UserManager.broadcast("CHAT//📢 [" + clientName + "]님이 입장하셨습니다.");
+			// 스레드 할당 후 타이머 시작 신호
+			out.println("SERVER_START_OK");
+			// 일단 닉네임을 먼저 받고 추가
+			UserManager.clientsAdd(this);
+
+			UserManager.broadcast("CHAT//>>> [" + clientName + "]님이 입장하셨습니다.");
 
 			UserManager.updateUserList();
 
@@ -57,12 +63,12 @@ public class ClientHandlerT implements Runnable {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("⚠️ " + clientName + " 사용자와의 연결이 예기치 않게 끊어졌습니다.");
+			System.out.println("* " + clientName + " 사용자와의 연결이 예기치 않게 끊어졌습니다.");
 		} finally {
 			UserManager.clientsRemove(this);
 
 			if (clientName != null) {
-				UserManager.broadcast("CHAT//❌ [" + clientName + "]님이 퇴장하셨습니다.");
+				UserManager.broadcast("CHAT//X [" + clientName + "]님이 퇴장하셨습니다.");
 			}
 
 			UserManager.updateUserList();
@@ -79,6 +85,13 @@ public class ClientHandlerT implements Runnable {
 				}
 
 				System.out.println("***클라이언트 종료 및 자원 해제***");
+
+				// 종료 시간
+				long endTime = System.currentTimeMillis();
+				long duration = endTime - startTime;
+
+				// 성능 테스트용
+				System.out.println(" [성능 로그] 클라이언트 " + clientName + " | 스레드 점유 시간: " + duration + "ms");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

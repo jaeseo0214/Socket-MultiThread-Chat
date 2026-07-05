@@ -86,7 +86,15 @@ public class ClientGUI extends JFrame {
 			new Thread(receiver).start();
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			// 서버 연결 실패 시 사용자에게 알림
+			JOptionPane.showMessageDialog(this, "서버에 접속할 수 없습니다.\n정원이 초과되었거나 서버가 점검 중입니다.", "접속 실패",
+					JOptionPane.ERROR_MESSAGE);
+			
+			// 앱종료
+			// 근데 실제 서비스라면 바로 종료보단 나가기 버튼 누르면 끄게 하거나
+			// 닉네임 다시 입력받거나
+			// 초기 화면으로 돌아가는 그런 로직으로 하면 좋을 듯
+			System.exit(0);
 		}
 	}
 
